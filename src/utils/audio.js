@@ -78,7 +78,7 @@ export class AudioSpeechManager {
       console.error('Audio start error:', err);
       let userFriendlyMsg = err.message;
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        userFriendlyMsg = 'Microphone permission denied. Please grant microphone access in your browser settings to use InTruth.';
+        userFriendlyMsg = 'Microphone permission denied. Please grant microphone access in your browser settings to use FiltrAI.';
       }
       this.callbacks.onError(userFriendlyMsg);
       this.callbacks.onStatusChange('Error: Mic blocked');

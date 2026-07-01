@@ -36,7 +36,7 @@ function App() {
 
   // Settings state
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem('intruth_settings');
+    const saved = localStorage.getItem('filtrai_settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
 
@@ -60,7 +60,7 @@ function App() {
   // Persistence of settings
   const handleSaveSettings = (newSettings) => {
     setSettings(newSettings);
-    localStorage.setItem('intruth_settings', JSON.stringify(newSettings));
+    localStorage.setItem('filtrai_settings', JSON.stringify(newSettings));
     setShowSettings(false);
 
     // Update active instances if they exist
@@ -270,7 +270,7 @@ function App() {
       return;
     }
 
-    const title = `InTruth Session — ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+    const title = `FiltrAI Session — ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
     let md = `# ${title}\n\n`;
     md += `## Settings\n`;
     md += `- Provider: ${settings.provider}\n`;
@@ -312,7 +312,7 @@ function App() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `intruth-factcheck-session-${Date.now()}.md`);
+    link.setAttribute('download', `filtrai-factcheck-session-${Date.now()}.md`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

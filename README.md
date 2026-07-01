@@ -1,6 +1,6 @@
-# 🔍 InTruth — Assistant de Fact-Checking en Temps Réel
+# 🔍 FiltrAI — Assistant de Fact-Checking en Temps Réel
 
-**InTruth** (développé sous le projet *FiltrAI*) est une application web mobile-first conçue pour écouter les conversations en direct et vérifier l'exactitude des affirmations énoncées en temps réel grâce à l'Intelligence Artificielle et à la recherche web instantanée.
+**FiltrAI** est une application web mobile-first conçue pour écouter les conversations en direct et vérifier l'exactitude des affirmations énoncées en temps réel grâce à l'Intelligence Artificielle et à la recherche web instantanée.
 
 L'application capture l'audio du microphone, transcrit la parole en texte, identifie les affirmations factuelles vérifiables, effectue des recherches en ligne automatiques et présente des verdicts sourcés et clairs.
 
@@ -81,7 +81,7 @@ npm run lint
 
 ## 🛡️ Sécurité & Confidentialité
 
-*   **Stockage local** : Toutes vos clés d'API et configurations sont enregistrées dans le `localStorage` de votre propre navigateur. Elles ne transitent par aucun serveur intermédiaire propre à InTruth.
+*   **Stockage local** : Toutes vos clés d'API et configurations sont enregistrées dans le `localStorage` de votre propre navigateur. Elles ne transitent par aucun serveur intermédiaire propre à FiltrAI.
 *   **Appels directes** : Les requêtes vers OpenRouter, Anthropic, Deepgram et Serper s'effectuent directement depuis votre navigateur.
 *   **Filtrage des sources** : Le pipeline exclut automatiquement les plateformes communautaires et réseaux sociaux (Reddit, Twitter/X, Facebook, TikTok, etc.) afin de garantir une vérification basée sur des sources d'information fiables.
 

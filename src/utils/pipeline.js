@@ -1,7 +1,7 @@
 // pipeline.js
 // Fact-checking pipeline logic coordinating LLM (OpenRouter / Anthropic) and Serper Web Search.
 
-const EVALUATE_PROMPT = `You are InTruth, an expert real-time fact-checking assistant.
+const EVALUATE_PROMPT = `You are FiltrAI, an expert real-time fact-checking assistant.
 Your task is to analyze the provided conversation transcript snippet and identify any clear, check-worthy, factual claims that have been made.
 Check-worthy claims are specific factual statements, statistics, historical facts, public policies, or records that can be proven true or false. Do NOT extract subjective opinions, predictions, value judgments, or rhetorical questions.
 
@@ -25,7 +25,7 @@ You MUST output your response as a JSON array of objects, containing ONLY the ar
 
 Ensure the JSON is valid and can be parsed directly. Do not include markdown code block wrapper or any other text.`;
 
-const GROUNDED_PROMPT = `You are InTruth, an expert real-time fact-checking assistant.
+const GROUNDED_PROMPT = `You are FiltrAI, an expert real-time fact-checking assistant.
 Your task is to review a specific claim, its initial verdict, and the web search evidence provided, and issue a finalized grounded verdict and explanation.
 Ignore any information in the search evidence that was published after the event date, if provided.
 Write the claim, verdict, and explanation. The explanation must be highly objective, reference the source facts directly, and be written in the language of the transcript if possible.
@@ -88,9 +88,9 @@ async function callLLM(prompt, systemPrompt, settings) {
   
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
-    console.warn('[pipeline] LLM fetch request timed out (15s). Aborting...');
+    console.warn('[pipeline] LLM fetch request timed out (30s). Aborting...');
     controller.abort();
-  }, 15000);
+  }, 30000);
   
   try {
     if (isOpenRouter) {
@@ -107,8 +107,8 @@ async function callLLM(prompt, systemPrompt, settings) {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${settings.openrouterKey}`,
-          'HTTP-Referer': 'https://intruth.ai',
-          'X-Title': 'InTruth Realtime'
+          'HTTP-Referer': 'https://filtrai.ai',
+          'X-Title': 'FiltrAI Realtime'
         },
         body: JSON.stringify({
           model: model,
@@ -731,7 +731,7 @@ export class FactCheckPipeline {
       }
       let msg = err.message;
       if (err.name === 'AbortError') {
-        msg = 'Request timed out after 15 seconds. The AI model took too long to respond.';
+        msg = 'Request timed out after 30 seconds. The AI model took too long to respond.';
       }
       console.error('[pipeline] FactCheckPipeline evaluation error:', err);
       this.callbacks.onError(msg || 'Error occurred during evaluation');
