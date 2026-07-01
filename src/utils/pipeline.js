@@ -350,7 +350,9 @@ export class FactCheckPipeline {
       onNewVerdict: callbacks.onNewVerdict || (() => {}),
       onUpdateVerdicts: callbacks.onUpdateVerdicts || (() => {}),
       onNewSpeaker: callbacks.onNewSpeaker || (() => {}),
-      onError: callbacks.onError || (() => {})
+      onError: callbacks.onError || (() => {}),
+      onCheckingBubbles: callbacks.onCheckingBubbles || (() => {}),
+      onCheckComplete: callbacks.onCheckComplete || (() => {})
     };
     
     this.recentClaims = new Map(); // key -> [timestamp, originalClaim]
@@ -440,10 +442,15 @@ export class FactCheckPipeline {
     return false;
   }
   
-  async handleNewSentence(text, speakerId) {
-    if (!text || text.trim().length < 5) return;
+  async handleNewSentence(text, speakerId, bubbleId) {
+    if (!text || text.trim().length < 5) {
+      if (bubbleId) {
+        this.callbacks.onCheckComplete?.([bubbleId], []);
+      }
+      return;
+    }
     
-    console.log(`[pipeline] handleNewSentence: "${text}" | speakerId: ${speakerId}`);
+    console.log(`[pipeline] handleNewSentence: "${text}" | speakerId: ${speakerId} | bubbleId: ${bubbleId}`);
     
     // Clear any pending inactivity timeout
     if (this.inactivityTimeout) {
@@ -469,7 +476,7 @@ export class FactCheckPipeline {
     const label = confirmedName ? `[${confirmedName}]` : (speakerId !== null && speakerId !== undefined ? `[Speaker ${speakerId}]` : null);
     const labeledText = label ? `${label} ${text}` : text;
     
-    this.sentenceWindow.push({ text: labeledText, speakerId, speakerName: confirmedName });
+    this.sentenceWindow.push({ text: labeledText, speakerId, speakerName: confirmedName, bubbleId });
     if (this.sentenceWindow.length > 15) this.sentenceWindow.shift();
     this.sentenceCount++;
     
@@ -510,6 +517,7 @@ export class FactCheckPipeline {
   async flushCurrentWindow() {
     if (this.sentenceWindow.length === 0) return;
     
+    const bubbleIds = this.sentenceWindow.map(s => s.bubbleId).filter(Boolean);
     const text = this.sentenceWindow.map(s => s.text).join(' ');
     console.log('[pipeline] Flushing current sentences:', text);
     
@@ -551,10 +559,11 @@ export class FactCheckPipeline {
       this.inactivityTimeout = null;
     }
     
-    await this.evaluateClaims(text, lexicalSummary, lexicalSnapshot, dominantSpeaker, dominantSpeakerId);
+    await this.evaluateClaims(text, lexicalSummary, lexicalSnapshot, dominantSpeaker, dominantSpeakerId, bubbleIds);
   }
   
   async evaluateWindow() {
+    const bubbleIds = this.sentenceWindow.map(s => s.bubbleId).filter(Boolean);
     const text = this.sentenceWindow.map(s => s.text).join(' ');
     console.log('[pipeline] Evaluating window buffer:', text);
     
@@ -596,11 +605,14 @@ export class FactCheckPipeline {
       this.inactivityTimeout = null;
     }
     
-    await this.evaluateClaims(text, lexicalSummary, lexicalSnapshot, dominantSpeaker, dominantSpeakerId);
+    await this.evaluateClaims(text, lexicalSummary, lexicalSnapshot, dominantSpeaker, dominantSpeakerId, bubbleIds);
   }
   
-  async evaluateClaims(contextText, lexicalSummary, lexicalSnapshot, dominantSpeaker, dominantSpeakerId) {
-    console.log(`[pipeline] evaluateClaims called. Context: "${contextText}"`);
+  async evaluateClaims(contextText, lexicalSummary, lexicalSnapshot, dominantSpeaker, dominantSpeakerId, bubbleIds) {
+    console.log(`[pipeline] evaluateClaims called. Context: "${contextText}" | Bubbles: ${JSON.stringify(bubbleIds)}`);
+    if (bubbleIds && bubbleIds.length > 0) {
+      this.callbacks.onCheckingBubbles?.(bubbleIds);
+    }
     try {
       const language = this.settings.language || 'en';
       let titleContext = '';
@@ -619,7 +631,12 @@ export class FactCheckPipeline {
       const valid = results.filter(r => r.claim && r.verdict && r.verdict !== 'UNVERIFIABLE' && !this.isDuplicate(r.claim));
       console.log(`[pipeline] Check-worthy and non-duplicate claims found: ${valid.length}`);
       
-      if (!valid.length) return;
+      if (!valid.length) {
+        if (bubbleIds && bubbleIds.length > 0) {
+          this.callbacks.onCheckComplete?.(bubbleIds, []);
+        }
+        return;
+      }
       
       // Generate unique IDs for the new claims
       const fastCards = valid.map(r => ({
@@ -637,6 +654,10 @@ export class FactCheckPipeline {
       
       // Call listener with fast cards
       this.callbacks.onNewVerdict(fastCards);
+      
+      if (bubbleIds && bubbleIds.length > 0) {
+        this.callbacks.onCheckComplete?.(bubbleIds, valid.map(v => v.claim));
+      }
       
       // 2. Perform Web search and grounding in parallel for each card
       fastCards.forEach(async (card) => {
@@ -705,6 +726,9 @@ export class FactCheckPipeline {
       });
       
     } catch (err) {
+      if (bubbleIds && bubbleIds.length > 0) {
+        this.callbacks.onCheckComplete?.(bubbleIds, []);
+      }
       let msg = err.message;
       if (err.name === 'AbortError') {
         msg = 'Request timed out after 15 seconds. The AI model took too long to respond.';

@@ -48,6 +48,7 @@ function App() {
   const [detectedSpeakerIds, setDetectedSpeakerIds] = useState([]); // Array of IDs seen
   const [newSpeakerPrompt, setNewSpeakerPrompt] = useState(null); // { id, sample }
   const [speakerToRename, setSpeakerToRename] = useState(null); // { id, name }
+  const [activeEvaluations, setActiveEvaluations] = useState(0);
 
   // Canvas visualizer reference
   const canvasRef = useRef(null);
@@ -103,6 +104,29 @@ function App() {
       },
       onError: (msg) => {
         setErrorMessage(msg);
+      },
+      onCheckingBubbles: (bubbleIds) => {
+        setActiveEvaluations(prev => prev + 1);
+        setTranscripts(prev => prev.map(t => {
+          if (bubbleIds.includes(t.id)) {
+            return { ...t, status: 'checking' };
+          }
+          return t;
+        }));
+      },
+      onCheckComplete: (bubbleIds, claimsFound) => {
+        setActiveEvaluations(prev => Math.max(0, prev - 1));
+        setTranscripts(prev => prev.map(t => {
+          if (bubbleIds.includes(t.id)) {
+            const hasClaims = claimsFound && claimsFound.length > 0;
+            return {
+              ...t,
+              status: hasClaims ? 'worthy' : 'not_worthy',
+              claims: claimsFound || []
+            };
+          }
+          return t;
+        }));
       }
     });
 
@@ -169,6 +193,7 @@ function App() {
       setSpeakersMap({});
       setDetectedSpeakerIds([]);
       setNewSpeakerPrompt(null);
+      setActiveEvaluations(0);
 
       if (pipelineRef.current) {
         pipelineRef.current.reset();
@@ -193,21 +218,23 @@ function App() {
               return prev;
             });
 
+            const bubbleId = 't_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
             // Add transcript bubble
             setTranscripts(prev => [
               ...prev,
               {
-                id: 't_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now(),
+                id: bubbleId,
                 text,
                 isFinal: true,
                 speakerId: sid,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                status: 'waiting'
               }
             ]);
 
             // Forward to fact-checking pipeline
             if (pipelineRef.current) {
-              pipelineRef.current.handleNewSentence(text, sid);
+              pipelineRef.current.handleNewSentence(text, sid, bubbleId);
             }
           } else {
             setInterimTranscript(text);
@@ -329,6 +356,12 @@ function App() {
             {isListening ? 'Stop Checking' : 'Start Listening'}
           </button>
         </div>
+        {activeEvaluations > 0 && (
+          <div className="pipeline-loading-indicator animate-pulse">
+            <span className="pulse-icon">🔍</span>
+            <span>Analyse de pertinence IA en cours... Veuillez patienter</span>
+          </div>
+        )}
       </section>
 
       {/* Speaker Dashboard */}
@@ -477,12 +510,40 @@ function App() {
                 const color = SPEAKER_COLORS[t.speakerId % SPEAKER_COLORS.length];
 
                 return (
-                  <div key={t.id} className="transcript-bubble">
+                  <div key={t.id} className={`transcript-bubble ${t.status || 'idle'}`}>
                     <div className="transcript-meta">
                       <span className="transcript-speaker" style={{ color }}>{name}</span>
                       <span className="transcript-time">{formatTime(t.timestamp)}</span>
                     </div>
                     <p className="transcript-text">{t.text}</p>
+                    {t.status && t.status !== 'idle' && (
+                      <div className={`bubble-status-badge ${t.status}`}>
+                        {t.status === 'waiting' && (
+                          <>
+                            <span className="badge-icon pulse-soft">⏳</span>
+                            <span>En attente de pertinence...</span>
+                          </>
+                        )}
+                        {t.status === 'checking' && (
+                          <>
+                            <span className="badge-icon spin">🔍</span>
+                            <span>Analyse de pertinence en cours (Attendre)...</span>
+                          </>
+                        )}
+                        {t.status === 'worthy' && (
+                          <>
+                            <span className="badge-icon text-emerald">✅</span>
+                            <span>Fait vérifiable détecté : "{t.claims?.join(', ')}"</span>
+                          </>
+                        )}
+                        {t.status === 'not_worthy' && (
+                          <>
+                            <span className="badge-icon text-muted">⚠️</span>
+                            <span>Contenu non vérifiable (sans affirmation factuelle)</span>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
