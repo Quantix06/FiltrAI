@@ -325,6 +325,16 @@ function App() {
         <div className="logo-section">
           <span className="logo-icon">🔍</span>
           <span className="app-title">FiltrAI</span>
+          <span className="lang-header-badge">
+            {settings.language === 'en' ? '🇺🇸 EN' :
+             settings.language === 'fr' ? '🇫🇷 FR' :
+             settings.language === 'es' ? '🇪🇸 ES' :
+             settings.language === 'de' ? '🇩🇪 DE' :
+             settings.language === 'it' ? '🇮🇹 IT' :
+             settings.language === 'pt' ? '🇧🇷 PT' :
+             settings.language === 'zh' ? '🇨🇳 ZH' :
+             `🌐 ${settings.language.toUpperCase()}`}
+          </span>
         </div>
         <div className="header-actions">
           <button className="icon-btn" onClick={handleExportSession} title="Export Session">
@@ -348,6 +358,16 @@ function App() {
           <div className="status-indicator">
             <span className={`status-dot ${isListening ? 'listening' : ''}`} />
             <span>{listeningStatus}</span>
+            <span className="lang-mini-badge">
+              {settings.language === 'en' ? '🇺🇸 EN' :
+               settings.language === 'fr' ? '🇫🇷 FR' :
+               settings.language === 'es' ? '🇪🇸 ES' :
+               settings.language === 'de' ? '🇩🇪 DE' :
+               settings.language === 'it' ? '🇮🇹 IT' :
+               settings.language === 'pt' ? '🇧🇷 PT' :
+               settings.language === 'zh' ? '🇨🇳 ZH' :
+               `🌐 ${settings.language.toUpperCase()}`}
+            </span>
           </div>
           <button
             className={`control-btn ${isListening ? 'active' : ''}`}
