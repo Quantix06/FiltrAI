@@ -33,7 +33,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  
+
   // Settings state
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('intruth_settings');
@@ -61,7 +61,7 @@ function App() {
     setSettings(newSettings);
     localStorage.setItem('intruth_settings', JSON.stringify(newSettings));
     setShowSettings(false);
-    
+
     // Update active instances if they exist
     if (audioManagerRef.current) {
       audioManagerRef.current.updateSettings(newSettings);
@@ -89,13 +89,13 @@ function App() {
         const sid = parseInt(id);
         setDetectedSpeakerIds(prev => {
           if (prev.includes(sid)) return prev;
-          
+
           // Automatically add a default name to map
           setSpeakersMap(prevMap => {
             if (prevMap[sid]) return prevMap;
             return { ...prevMap, [sid]: `Speaker ${sid}` };
           });
-          
+
           // Prompt user to customize the name
           setNewSpeakerPrompt({ id: sid, sample });
           return [...prev, sid];
@@ -131,10 +131,10 @@ function App() {
   const handleConfirmSpeakerName = (id, name) => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    
+
     // Register in map
     setSpeakersMap(prev => ({ ...prev, [id]: trimmed }));
-    
+
     // Register in pipeline
     if (pipelineRef.current) {
       pipelineRef.current.registerSpeakerName(id, trimmed);
@@ -169,7 +169,7 @@ function App() {
       setSpeakersMap({});
       setDetectedSpeakerIds([]);
       setNewSpeakerPrompt(null);
-      
+
       if (pipelineRef.current) {
         pipelineRef.current.reset();
       }
@@ -180,7 +180,7 @@ function App() {
           if (isFinal) {
             setInterimTranscript('');
             const sid = speakerId !== null && speakerId !== undefined ? parseInt(speakerId) : 0;
-            
+
             // Register speaker ID internally in case the pipeline event was skipped
             setDetectedSpeakerIds(prev => {
               if (!prev.includes(sid)) {
@@ -297,7 +297,7 @@ function App() {
       <header className="app-header">
         <div className="logo-section">
           <span className="logo-icon">🔍</span>
-          <span className="app-title">InTruth</span>
+          <span className="app-title">FiltrAI</span>
         </div>
         <div className="header-actions">
           <button className="icon-btn" onClick={handleExportSession} title="Export Session">
@@ -311,10 +311,10 @@ function App() {
 
       {/* Mic Capture & Volume Visualizer */}
       <section className="status-visualizer-card">
-        <canvas 
-          ref={canvasRef} 
-          className="visualizer-canvas" 
-          width={400} 
+        <canvas
+          ref={canvasRef}
+          className="visualizer-canvas"
+          width={400}
           height={48}
         />
         <div className="status-badge-row">
@@ -322,8 +322,8 @@ function App() {
             <span className={`status-dot ${isListening ? 'listening' : ''}`} />
             <span>{listeningStatus}</span>
           </div>
-          <button 
-            className={`control-btn ${isListening ? 'active' : ''}`} 
+          <button
+            className={`control-btn ${isListening ? 'active' : ''}`}
             onClick={handleToggleListening}
           >
             {isListening ? 'Stop Checking' : 'Start Listening'}
@@ -340,8 +340,8 @@ function App() {
               const name = speakersMap[sid] || `Speaker ${sid}`;
               const color = SPEAKER_COLORS[sid % SPEAKER_COLORS.length];
               return (
-                <div 
-                  key={sid} 
+                <div
+                  key={sid}
                   className="speaker-pill"
                   onClick={() => setSpeakerToRename({ id: sid, name })}
                 >
@@ -360,10 +360,10 @@ function App() {
           <div className="prompt-text">Who is speaking right now?</div>
           <div className="prompt-sample">"{newSpeakerPrompt.sample}..."</div>
           <div className="prompt-input-row">
-            <input 
-              type="text" 
-              className="prompt-input" 
-              placeholder="e.g. Alice" 
+            <input
+              type="text"
+              className="prompt-input"
+              placeholder="e.g. Alice"
               id="speaker-name-input"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -371,7 +371,7 @@ function App() {
                 }
               }}
             />
-            <button 
+            <button
               className="prompt-btn"
               onClick={() => {
                 const val = document.getElementById('speaker-name-input').value;
@@ -380,7 +380,7 @@ function App() {
             >
               Save
             </button>
-            <button 
+            <button
               className="prompt-btn skip"
               onClick={() => setNewSpeakerPrompt(null)}
             >
@@ -400,13 +400,13 @@ function App() {
 
       {/* Tabs */}
       <div className="view-tabs">
-        <button 
+        <button
           className={`tab-btn ${activeTab === 'verdicts' ? 'active' : ''}`}
           onClick={() => setActiveTab('verdicts')}
         >
           Fact-Checks ({verdicts.length})
         </button>
-        <button 
+        <button
           className={`tab-btn ${activeTab === 'transcript' ? 'active' : ''}`}
           onClick={() => setActiveTab('transcript')}
         >
@@ -428,13 +428,13 @@ function App() {
             </div>
           ) : (
             verdicts.map(card => {
-              const colorIndex = card.dominantSpeakerId !== null && card.dominantSpeakerId !== undefined 
-                ? parseInt(card.dominantSpeakerId) 
+              const colorIndex = card.dominantSpeakerId !== null && card.dominantSpeakerId !== undefined
+                ? parseInt(card.dominantSpeakerId)
                 : 0;
               const spkColor = SPEAKER_COLORS[colorIndex % SPEAKER_COLORS.length];
-              
+
               return (
-                <div 
+                <div
                   key={card.id}
                   className={`verdict-card ${card.verdict.toLowerCase().replace(' ', '_')} ${card.pending ? 'pending' : ''}`}
                   onClick={() => setSelectedCard(card)}
@@ -475,7 +475,7 @@ function App() {
               {transcripts.map(t => {
                 const name = speakersMap[t.speakerId] || `Speaker ${t.speakerId}`;
                 const color = SPEAKER_COLORS[t.speakerId % SPEAKER_COLORS.length];
-                
+
                 return (
                   <div key={t.id} className="transcript-bubble">
                     <div className="transcript-meta">
@@ -506,9 +506,9 @@ function App() {
             <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px' }}>
               Rename Speaker ID {speakerToRename.id}
             </h4>
-            <input 
-              type="text" 
-              className="form-input" 
+            <input
+              type="text"
+              className="form-input"
               defaultValue={speakerToRename.name}
               id="rename-speaker-input"
               onKeyDown={(e) => {
@@ -519,8 +519,8 @@ function App() {
               }}
             />
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button 
-                className="prompt-btn" 
+              <button
+                className="prompt-btn"
                 style={{ flex: 1 }}
                 onClick={() => {
                   const val = document.getElementById('rename-speaker-input').value;
@@ -530,8 +530,8 @@ function App() {
               >
                 Save
               </button>
-              <button 
-                className="prompt-btn skip" 
+              <button
+                className="prompt-btn skip"
                 style={{ flex: 1 }}
                 onClick={() => setSpeakerToRename(null)}
               >
@@ -558,12 +558,12 @@ function App() {
 
               <div className="detail-verdict-section">
                 <span className="form-label">Verdict</span>
-                <span 
+                <span
                   className="detail-verdict-value"
-                  style={{ 
+                  style={{
                     color: selectedCard.verdict === 'TRUE' || selectedCard.verdict === 'SUBSTANTIALLY TRUE' ? 'var(--color-true)' :
-                           selectedCard.verdict === 'MISLEADING' ? 'var(--color-misleading)' :
-                           selectedCard.verdict === 'FALSE' ? 'var(--color-false)' : 'var(--color-unverifiable)'
+                      selectedCard.verdict === 'MISLEADING' ? 'var(--color-misleading)' :
+                        selectedCard.verdict === 'FALSE' ? 'var(--color-false)' : 'var(--color-unverifiable)'
                   }}
                 >
                   {selectedCard.verdict}
@@ -580,11 +580,11 @@ function App() {
                   <span className="form-label">Supporting Evidence & Sources</span>
                   <div className="sources-list">
                     {selectedCard.sources.map((src, i) => (
-                      <a 
-                        key={i} 
-                        href={src} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                      <a
+                        key={i}
+                        href={src}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="source-link-item"
                         title={src}
                       >
@@ -604,10 +604,10 @@ function App() {
 
       {/* Settings Modal Drawer */}
       {showSettings && (
-        <SettingsModal 
-          settings={settings} 
-          onSave={handleSaveSettings} 
-          onClose={() => setShowSettings(false)} 
+        <SettingsModal
+          settings={settings}
+          onSave={handleSaveSettings}
+          onClose={() => setShowSettings(false)}
         />
       )}
     </div>
@@ -634,7 +634,7 @@ function SettingsModal({ settings, onSave, onClose }) {
           {/* AI Provider */}
           <div className="form-group">
             <span className="form-label">AI Fact-Check Provider</span>
-            <select 
+            <select
               className="form-select"
               value={localSettings.provider}
               onChange={(e) => handleChange('provider', e.target.value)}
@@ -649,7 +649,7 @@ function SettingsModal({ settings, onSave, onClose }) {
             <>
               <div className="form-group">
                 <span className="form-label">OpenRouter API Key</span>
-                <input 
+                <input
                   type="password"
                   className="form-input"
                   placeholder="sk-or-..."
@@ -660,7 +660,7 @@ function SettingsModal({ settings, onSave, onClose }) {
               </div>
               <div className="form-group">
                 <span className="form-label">OpenRouter Model</span>
-                <input 
+                <input
                   type="text"
                   className="form-input"
                   placeholder="cohere/north-mini-code:free"
@@ -677,7 +677,7 @@ function SettingsModal({ settings, onSave, onClose }) {
             <>
               <div className="form-group">
                 <span className="form-label">Anthropic API Key</span>
-                <input 
+                <input
                   type="password"
                   className="form-input"
                   placeholder="sk-ant-..."
@@ -687,7 +687,7 @@ function SettingsModal({ settings, onSave, onClose }) {
               </div>
               <div className="form-group">
                 <span className="form-label">Anthropic Model</span>
-                <input 
+                <input
                   type="text"
                   className="form-input"
                   placeholder="claude-haiku-4-5-20251001"
@@ -701,7 +701,7 @@ function SettingsModal({ settings, onSave, onClose }) {
           {/* Google Serper Key */}
           <div className="form-group">
             <span className="form-label">Google Serper API Key</span>
-            <input 
+            <input
               type="password"
               className="form-input"
               placeholder="Enter Serper API Key"
@@ -714,7 +714,7 @@ function SettingsModal({ settings, onSave, onClose }) {
           {/* Transcription Mode */}
           <div className="form-group">
             <span className="form-label">Transcription Engine</span>
-            <select 
+            <select
               className="form-select"
               value={localSettings.transcriptionMode}
               onChange={(e) => handleChange('transcriptionMode', e.target.value)}
@@ -728,7 +728,7 @@ function SettingsModal({ settings, onSave, onClose }) {
           {localSettings.transcriptionMode === 'deepgram' && (
             <div className="form-group">
               <span className="form-label">Deepgram API Key</span>
-              <input 
+              <input
                 type="password"
                 className="form-input"
                 placeholder="Enter Deepgram Key"
@@ -742,7 +742,7 @@ function SettingsModal({ settings, onSave, onClose }) {
           {/* Language Selection */}
           <div className="form-group">
             <span className="form-label">Conversation Language</span>
-            <select 
+            <select
               className="form-select"
               value={localSettings.language}
               onChange={(e) => handleChange('language', e.target.value)}
