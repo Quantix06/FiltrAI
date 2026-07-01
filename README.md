@@ -3,7 +3,7 @@
 hi everyone!
 
 
-I built a real-time factchecker called intruth for live debates, speeches, interviews, press conferences, and political events!
+I built a real-time factchecker called FiltrAI for live debates, speeches, interviews, press conferences, and political events!
 multilang support works on debates in any of the selectable languages!
 
 it listens to audio from the active browser tab, identifies factual claims as they are made, and provides instant evidence-based verdicts using AI analysis and web research; most fact-checking docs come out days after debates, but now users can evaluate claims as they're made.
