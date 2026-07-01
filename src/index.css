@@ -1,0 +1,75 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-display: 'Outfit', var(--font-sans);
+  
+  /* Color Tokens - Modern Sleek Dark Mode */
+  --bg-main: #0b0c10;
+  --bg-card: rgba(31, 41, 55, 0.45);
+  --bg-card-hover: rgba(31, 41, 55, 0.65);
+  --bg-modal: #111827;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-glow: rgba(59, 130, 246, 0.3);
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  
+  /* Accent Verdict Colors */
+  --color-true: #10b981;        /* Emerald Green */
+  --color-sub-true: #34d399;    /* Light Emerald */
+  --color-misleading: #f59e0b;  /* Amber */
+  --color-false: #ef4444;       /* Ruby Red */
+  --color-unverifiable: #8b5cf6;/* Purple */
+  --color-pending: #3b82f6;     /* Blue */
+  
+  --color-primary: #6366f1;     /* Indigo Accent */
+  --color-primary-glow: rgba(99, 102, 241, 0.35);
+  
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
