@@ -16,6 +16,8 @@ import { RenameSpeakerModal } from './components/RenameSpeakerModal';
 import { VerdictDetailsModal } from './components/VerdictDetailsModal';
 import { TutorialModal } from './components/TutorialModal';
 import { SettingsModal } from './components/SettingsModal';
+import { SessionDivider } from './components/SessionDivider';
+import { TranscriptToolbar } from './components/TranscriptToolbar';
 
 const DEFAULT_SETTINGS = {
   provider: 'openrouter',
@@ -38,6 +40,7 @@ function App() {
   const [showTuto, setShowTuto] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showNotWorthy, setShowNotWorthy] = useState(true);
   
   // Settings state
   const [settings, setSettings] = useState(() => {
@@ -192,13 +195,21 @@ function App() {
     } else {
       // Start listening
       setErrorMessage('');
-      setTranscripts([]);
       setInterimTranscript('');
-      setVerdicts([]);
-      setSpeakersMap({});
-      setDetectedSpeakerIds([]);
       setNewSpeakerPrompt(null);
       setActiveEvaluations(0);
+
+      // Keep previous exchanges, but append a session divider
+      if (transcripts.length > 0) {
+        setTranscripts(prev => [
+          ...prev,
+          {
+            id: 'divider_' + Date.now(),
+            isDivider: true,
+            timestamp: Date.now()
+          }
+        ]);
+      }
       
       if (pipelineRef.current) {
         pipelineRef.current.reset();
@@ -317,6 +328,10 @@ function App() {
     document.body.removeChild(link);
   };
 
+  const handlePurgeNotWorthy = () => {
+    setTranscripts(prev => prev.filter(t => t.status !== 'not_worthy'));
+  };
+
   return (
     <div className="app-container">
       {/* Tuto side button */}
@@ -414,15 +429,33 @@ function App() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {transcripts.map(t => (
-                <TranscriptBubble
-                  key={t.id}
-                  t={t}
-                  speakersMap={speakersMap}
-                  speakerColors={SPEAKER_COLORS}
-                  formatTime={formatTime}
-                />
-              ))}
+              <TranscriptToolbar
+                showNotWorthy={showNotWorthy}
+                onToggleShowNotWorthy={() => setShowNotWorthy(!showNotWorthy)}
+                onPurge={handlePurgeNotWorthy}
+              />
+
+              {transcripts
+                .filter(t => showNotWorthy || t.status !== 'not_worthy' || t.isDivider)
+                .map(t => {
+                  if (t.isDivider) {
+                    return (
+                      <SessionDivider
+                        key={t.id}
+                        timestamp={t.timestamp}
+                      />
+                    );
+                  }
+                  return (
+                    <TranscriptBubble
+                      key={t.id}
+                      t={t}
+                      speakersMap={speakersMap}
+                      speakerColors={SPEAKER_COLORS}
+                      formatTime={formatTime}
+                    />
+                  );
+                })}
               {interimTranscript && (
                 <div className="transcript-bubble">
                   <div className="transcript-meta">
