@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { t } from '../utils/translations';
 
 export function SettingsModal({ settings, onSave, onClose }) {
   const [localSettings, setLocalSettings] = useState({ ...settings });
+  const lang = settings.language;
 
   const handleChange = (key, value) => {
     setLocalSettings(prev => ({ ...prev, [key]: value }));
@@ -11,13 +13,13 @@ export function SettingsModal({ settings, onSave, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <span className="modal-title">Fact-Checking Settings</span>
+          <span className="modal-title">{t(lang, 'settingsTitle')}</span>
           <button className="icon-btn" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
           {/* AI Provider */}
           <div className="form-group">
-            <span className="form-label">AI Fact-Check Provider</span>
+            <span className="form-label">{t(lang, 'aiProvider')}</span>
             <select
               className="form-select"
               value={localSettings.provider}
@@ -32,7 +34,7 @@ export function SettingsModal({ settings, onSave, onClose }) {
           {localSettings.provider === 'openrouter' && (
             <>
               <div className="form-group">
-                <span className="form-label">OpenRouter API Key</span>
+                <span className="form-label">{t(lang, 'openrouterKey')}</span>
                 <input
                   type="password"
                   className="form-input"
@@ -40,10 +42,10 @@ export function SettingsModal({ settings, onSave, onClose }) {
                   value={localSettings.openrouterKey}
                   onChange={(e) => handleChange('openrouterKey', e.target.value)}
                 />
-                <span className="help-text">Get your free or paid keys at openrouter.ai</span>
+                <span className="help-text">{t(lang, 'openrouterHelp')}</span>
               </div>
               <div className="form-group">
-                <span className="form-label">OpenRouter Model</span>
+                <span className="form-label">{t(lang, 'openrouterModel')}</span>
                 <input
                   type="text"
                   className="form-input"
@@ -60,7 +62,7 @@ export function SettingsModal({ settings, onSave, onClose }) {
           {localSettings.provider === 'anthropic' && (
             <>
               <div className="form-group">
-                <span className="form-label">Anthropic API Key</span>
+                <span className="form-label">{t(lang, 'anthropicKey')}</span>
                 <input
                   type="password"
                   className="form-input"
@@ -70,7 +72,7 @@ export function SettingsModal({ settings, onSave, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <span className="form-label">Anthropic Model</span>
+                <span className="form-label">{t(lang, 'anthropicModel')}</span>
                 <input
                   type="text"
                   className="form-input"
@@ -84,7 +86,7 @@ export function SettingsModal({ settings, onSave, onClose }) {
 
           {/* Google Serper Key */}
           <div className="form-group">
-            <span className="form-label">Google Serper API Key</span>
+            <span className="form-label">{t(lang, 'serperKey')}</span>
             <input
               type="password"
               className="form-input"
@@ -92,26 +94,26 @@ export function SettingsModal({ settings, onSave, onClose }) {
               value={localSettings.serperKey}
               onChange={(e) => handleChange('serperKey', e.target.value)}
             />
-            <span className="help-text">Required for web search grounding. Get a free key at serper.dev</span>
+            <span className="help-text">{t(lang, 'serperHelp')}</span>
           </div>
 
           {/* Transcription Mode */}
           <div className="form-group">
-            <span className="form-label">Transcription Engine</span>
+            <span className="form-label">{t(lang, 'transcriptionEngine')}</span>
             <select
               className="form-select"
               value={localSettings.transcriptionMode}
               onChange={(e) => handleChange('transcriptionMode', e.target.value)}
             >
-              <option value="webspeech">Web Speech API (Free / Built-in)</option>
-              <option value="deepgram">Deepgram WebSocket (Requires Key)</option>
+              <option value="webspeech">{t(lang, 'webspeechOption')}</option>
+              <option value="deepgram">{t(lang, 'deepgramOption')}</option>
             </select>
           </div>
 
           {/* Deepgram Key */}
           {localSettings.transcriptionMode === 'deepgram' && (
             <div className="form-group">
-              <span className="form-label">Deepgram API Key</span>
+              <span className="form-label">{t(lang, 'deepgramKey')}</span>
               <input
                 type="password"
                 className="form-input"
@@ -119,13 +121,13 @@ export function SettingsModal({ settings, onSave, onClose }) {
                 value={localSettings.deepgramKey}
                 onChange={(e) => handleChange('deepgramKey', e.target.value)}
               />
-              <span className="help-text">Required for speaker diarization (separating Alice/Bob). Get a key at deepgram.com</span>
+              <span className="help-text">{t(lang, 'deepgramHelp')}</span>
             </div>
           )}
 
           {/* Language Selection */}
           <div className="form-group">
-            <span className="form-label">Conversation Language</span>
+            <span className="form-label">{t(lang, 'conversationLanguage')}</span>
             <select
               className="form-select"
               value={localSettings.language}
@@ -142,8 +144,8 @@ export function SettingsModal({ settings, onSave, onClose }) {
           </div>
         </div>
         <div className="modal-footer">
-          <button className="modal-btn primary" onClick={() => onSave(localSettings)}>Save Settings</button>
-          <button className="modal-btn secondary" onClick={onClose}>Cancel</button>
+          <button className="modal-btn primary" onClick={() => onSave(localSettings)}>{t(lang, 'saveSettings')}</button>
+          <button className="modal-btn secondary" onClick={onClose}>{t(lang, 'cancel')}</button>
         </div>
       </div>
     </div>

@@ -1,13 +1,14 @@
 import React from 'react';
+import { t } from '../utils/translations';
 
-export function RenameSpeakerModal({ speaker, onSave, onCancel }) {
+export function RenameSpeakerModal({ speaker, onSave, onCancel, language }) {
   if (!speaker) return null;
 
   return (
     <div className="rename-dialog-overlay">
       <div className="rename-dialog">
         <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px' }}>
-          Rename Speaker ID {speaker.id}
+          {t(language, 'renameSpeakerTitle')} {speaker.id}
         </h4>
         <input
           type="text"
@@ -29,14 +30,14 @@ export function RenameSpeakerModal({ speaker, onSave, onCancel }) {
               onSave(speaker.id, val);
             }}
           >
-            Save
+            {t(language, 'save')}
           </button>
           <button
             className="prompt-btn skip"
             style={{ flex: 1 }}
             onClick={onCancel}
           >
-            Cancel
+            {t(language, 'cancel')}
           </button>
         </div>
       </div>

@@ -1,21 +1,22 @@
 import React from 'react';
+import { t } from '../utils/translations';
 
-export function TranscriptToolbar({ showNotWorthy, onToggleShowNotWorthy, onPurge }) {
+export function TranscriptToolbar({ showNotWorthy, onToggleShowNotWorthy, onPurge, language }) {
   return (
     <div className="transcript-toolbar">
       <button
         className={`toolbar-btn ${!showNotWorthy ? 'active' : ''}`}
         onClick={onToggleShowNotWorthy}
-        title={showNotWorthy ? "Masquer les phrases non vérifiables" : "Afficher les phrases non vérifiables"}
+        title={showNotWorthy ? t(language, 'hideNotWorthy') : t(language, 'showNotWorthy')}
       >
-        {showNotWorthy ? '👁️' : '🙈'} {showNotWorthy ? 'Masquer' : 'Afficher'} non-intéressantes
+        {showNotWorthy ? '👁️' : '🙈'} {showNotWorthy ? t(language, 'hideNotWorthy') : t(language, 'showNotWorthy')}
       </button>
       <button
         className="toolbar-btn purge-btn"
         onClick={onPurge}
-        title="Supprimer définitivement les phrases non intéressantes"
+        title={t(language, 'purge')}
       >
-        🗑️ Purger les inutiles
+        🗑️ {t(language, 'purge')}
       </button>
     </div>
   );

@@ -1,27 +1,29 @@
 import React from 'react';
+import { t } from '../utils/translations';
 
 export function Header({ settings, onExportSession, onOpenSettings }) {
+  const lang = settings.language;
   return (
     <header className="app-header">
       <div className="logo-section">
         <span className="logo-icon">🔍</span>
         <span className="app-title">FiltrAI</span>
         <span className="lang-header-badge">
-          {settings.language === 'en' ? '🇺🇸 EN' :
-           settings.language === 'fr' ? '🇫🇷 FR' :
-           settings.language === 'es' ? '🇪🇸 ES' :
-           settings.language === 'de' ? '🇩🇪 DE' :
-           settings.language === 'it' ? '🇮🇹 IT' :
-           settings.language === 'pt' ? '🇧🇷 PT' :
-           settings.language === 'zh' ? '🇨🇳 ZH' :
-           `🌐 ${settings.language.toUpperCase()}`}
+          {lang === 'en' ? '🇺🇸 EN' :
+           lang === 'fr' ? '🇫🇷 FR' :
+           lang === 'es' ? '🇪🇸 ES' :
+           lang === 'de' ? '🇩🇪 DE' :
+           lang === 'it' ? '🇮🇹 IT' :
+           lang === 'pt' ? '🇧🇷 PT' :
+           lang === 'zh' ? '🇨🇳 ZH' :
+           `🌐 ${lang.toUpperCase()}`}
         </span>
       </div>
       <div className="header-actions">
-        <button className="icon-btn" onClick={onExportSession} title="Export Session">
+        <button className="icon-btn" onClick={onExportSession} title={t(lang, 'exportSession')}>
           📥
         </button>
-        <button className="icon-btn" onClick={onOpenSettings} title="Settings">
+        <button className="icon-btn" onClick={onOpenSettings} title={t(lang, 'settings')}>
           ⚙️
         </button>
       </div>

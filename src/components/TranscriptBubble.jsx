@@ -1,6 +1,7 @@
 import React from 'react';
+import { t as translate } from '../utils/translations';
 
-export function TranscriptBubble({ t, speakersMap, speakerColors, formatTime }) {
+export function TranscriptBubble({ t, speakersMap, speakerColors, formatTime, language }) {
   const name = speakersMap[t.speakerId] || `Speaker ${t.speakerId}`;
   const color = speakerColors[t.speakerId % speakerColors.length];
 
@@ -16,25 +17,25 @@ export function TranscriptBubble({ t, speakersMap, speakerColors, formatTime }) 
           {t.status === 'waiting' && (
             <>
               <span className="badge-icon pulse-soft">⏳</span>
-              <span>En attente de pertinence...</span>
+              <span>{translate(language, 'waitingRelevance')}</span>
             </>
           )}
           {t.status === 'checking' && (
             <>
               <span className="badge-icon spin">🔍</span>
-              <span>Analyse de pertinence en cours (Attendre)...</span>
+              <span>{translate(language, 'checkingRelevance')}</span>
             </>
           )}
           {t.status === 'worthy' && (
             <>
               <span className="badge-icon text-emerald">✅</span>
-              <span>Fait vérifiable détecté : "{t.claims?.join(', ')}"</span>
+              <span>{translate(language, 'worthyFactual')}"{t.claims?.join(', ')}"</span>
             </>
           )}
           {t.status === 'not_worthy' && (
             <>
               <span className="badge-icon text-muted">⚠️</span>
-              <span>Contenu non vérifiable (sans affirmation factuelle)</span>
+              <span>{translate(language, 'notWorthyFactual')}</span>
             </>
           )}
         </div>

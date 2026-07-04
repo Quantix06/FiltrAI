@@ -1,6 +1,7 @@
 import React from 'react';
+import { t, getStatusTranslation } from '../utils/translations';
 
-export function VisualizerCard({ canvasRef, isListening, listeningStatus, activeEvaluations, onToggleListening }) {
+export function VisualizerCard({ canvasRef, isListening, listeningStatus, activeEvaluations, onToggleListening, language }) {
   return (
     <section className="status-visualizer-card">
       <canvas
@@ -12,19 +13,19 @@ export function VisualizerCard({ canvasRef, isListening, listeningStatus, active
       <div className="status-badge-row">
         <div className="status-indicator">
           <span className={`status-dot ${isListening ? 'listening' : ''}`} />
-          <span>{listeningStatus}</span>
+          <span>{getStatusTranslation(language, listeningStatus)}</span>
         </div>
         <button
           className={`control-btn ${isListening ? 'active' : ''}`}
           onClick={onToggleListening}
         >
-          {isListening ? 'Stop Checking' : 'Start Listening'}
+          {isListening ? t(language, 'stopChecking') : t(language, 'startListening')}
         </button>
       </div>
       {activeEvaluations > 0 && (
         <div className="pipeline-loading-indicator animate-pulse">
           <span className="pulse-icon">🔍</span>
-          <span>Analyse de pertinence IA en cours... Veuillez patienter</span>
+          <span>{t(language, 'checkingInProcess')}</span>
         </div>
       )}
     </section>

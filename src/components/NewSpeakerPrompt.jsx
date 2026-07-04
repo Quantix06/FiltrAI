@@ -1,11 +1,12 @@
 import React from 'react';
+import { t } from '../utils/translations';
 
-export function NewSpeakerPrompt({ prompt, onConfirm, onSkip }) {
+export function NewSpeakerPrompt({ prompt, onConfirm, onSkip, language }) {
   if (!prompt) return null;
 
   return (
     <div className="speaker-prompt-banner">
-      <div className="prompt-text">Who is speaking right now?</div>
+      <div className="prompt-text">{t(language, 'whoIsSpeaking')}</div>
       <div className="prompt-sample">"{prompt.sample}..."</div>
       <div className="prompt-input-row">
         <input
@@ -26,13 +27,13 @@ export function NewSpeakerPrompt({ prompt, onConfirm, onSkip }) {
             onConfirm(prompt.id, val || `Speaker ${prompt.id}`);
           }}
         >
-          Save
+          {t(language, 'save')}
         </button>
         <button
           className="prompt-btn skip"
           onClick={onSkip}
         >
-          Skip
+          {t(language, 'skip')}
         </button>
       </div>
     </div>

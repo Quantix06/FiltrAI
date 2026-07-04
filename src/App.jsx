@@ -4,6 +4,7 @@ import './App.css';
 import { AudioSpeechManager } from './utils/audio';
 import { FactCheckPipeline } from './utils/pipeline';
 import { SPEAKER_COLORS, formatTime } from './utils/helpers';
+import { t } from './utils/translations';
 
 // Import Components
 import { Header } from './components/Header';
@@ -336,7 +337,7 @@ function App() {
     <div className="app-container">
       {/* Tuto side button */}
       <button className="tuto-side-btn" onClick={() => setShowTuto(true)} title="Afficher le guide">
-        TUTO 💡
+        {t(settings.language, 'tutoBtn')}
       </button>
 
       {/* Header */}
@@ -353,6 +354,7 @@ function App() {
         listeningStatus={listeningStatus}
         activeEvaluations={activeEvaluations}
         onToggleListening={handleToggleListening}
+        language={settings.language}
       />
 
       {/* Speaker Dashboard */}
@@ -361,6 +363,7 @@ function App() {
         speakersMap={speakersMap}
         onSpeakerClick={setSpeakerToRename}
         speakerColors={SPEAKER_COLORS}
+        language={settings.language}
       />
 
       {/* New Speaker Identification prompt */}
@@ -368,6 +371,7 @@ function App() {
         prompt={newSpeakerPrompt}
         onConfirm={handleConfirmSpeakerName}
         onSkip={() => setNewSpeakerPrompt(null)}
+        language={settings.language}
       />
 
       {/* Error Message banner */}
@@ -384,13 +388,13 @@ function App() {
           className={`tab-btn ${activeTab === 'verdicts' ? 'active' : ''}`}
           onClick={() => setActiveTab('verdicts')}
         >
-          Fact-Checks ({verdicts.length})
+          {t(settings.language, 'factChecksTab')} ({verdicts.length})
         </button>
         <button
           className={`tab-btn ${activeTab === 'transcript' ? 'active' : ''}`}
           onClick={() => setActiveTab('transcript')}
         >
-          Live Transcripts
+          {t(settings.language, 'liveTranscriptsTab')}
         </button>
       </div>
 
@@ -402,8 +406,7 @@ function App() {
             <div className="empty-state">
               <span className="empty-icon">🛡️</span>
               <p className="empty-text">
-                No claims evaluated yet.<br />
-                Start listening to a conversation to identify and fact-check factual claims in real-time.
+                {t(settings.language, 'emptyClaims')}
               </p>
             </div>
           ) : (
@@ -414,6 +417,7 @@ function App() {
                 speakerColors={SPEAKER_COLORS}
                 formatTime={formatTime}
                 onClick={() => setSelectedCard(card)}
+                language={settings.language}
               />
             ))
           )
@@ -423,8 +427,7 @@ function App() {
             <div className="empty-state">
               <span className="empty-icon">💬</span>
               <p className="empty-text">
-                No speech captured yet.<br />
-                Speak into your microphone to view the real-time transcription feed.
+                {t(settings.language, 'emptyTranscripts')}
               </p>
             </div>
           ) : (
@@ -433,6 +436,7 @@ function App() {
                 showNotWorthy={showNotWorthy}
                 onToggleShowNotWorthy={() => setShowNotWorthy(!showNotWorthy)}
                 onPurge={handlePurgeNotWorthy}
+                language={settings.language}
               />
 
               {transcripts
@@ -443,6 +447,7 @@ function App() {
                       <SessionDivider
                         key={t.id}
                         timestamp={t.timestamp}
+                        language={settings.language}
                       />
                     );
                   }
@@ -453,13 +458,14 @@ function App() {
                       speakersMap={speakersMap}
                       speakerColors={SPEAKER_COLORS}
                       formatTime={formatTime}
+                      language={settings.language}
                     />
                   );
                 })}
               {interimTranscript && (
                 <div className="transcript-bubble">
                   <div className="transcript-meta">
-                    <span className="transcript-speaker" style={{ color: '#9ca3af' }}>Listening...</span>
+                    <span className="transcript-speaker" style={{ color: '#9ca3af' }}>{t(settings.language, 'listeningLabel')}</span>
                   </div>
                   <p className="transcript-text transcript-interim">"{interimTranscript}"</p>
                 </div>
@@ -477,17 +483,22 @@ function App() {
           setSpeakerToRename(null);
         }}
         onCancel={() => setSpeakerToRename(null)}
+        language={settings.language}
       />
 
       {/* Card Details Modal Drawer */}
       <VerdictDetailsModal
         card={selectedCard}
         onClose={() => setSelectedCard(null)}
+        language={settings.language}
       />
 
       {/* Tutorial Modal Drawer */}
       {showTuto && (
-        <TutorialModal onClose={() => setShowTuto(false)} />
+        <TutorialModal
+          onClose={() => setShowTuto(false)}
+          language={settings.language}
+        />
       )}
 
       {/* Settings Modal Drawer */}

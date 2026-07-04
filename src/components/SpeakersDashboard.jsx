@@ -1,11 +1,12 @@
 import React from 'react';
+import { t } from '../utils/translations';
 
-export function SpeakersDashboard({ detectedSpeakerIds, speakersMap, onSpeakerClick, speakerColors }) {
+export function SpeakersDashboard({ detectedSpeakerIds, speakersMap, onSpeakerClick, speakerColors, language }) {
   if (detectedSpeakerIds.length === 0) return null;
 
   return (
     <section className="speakers-dashboard">
-      <div className="dashboard-title">Active Speakers (Tap to Rename)</div>
+      <div className="dashboard-title">{t(language, 'activeSpeakers')}</div>
       <div className="speakers-row">
         {detectedSpeakerIds.map(sid => {
           const name = speakersMap[sid] || `Speaker ${sid}`;

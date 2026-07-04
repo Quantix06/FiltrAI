@@ -1,6 +1,7 @@
 import React from 'react';
+import { t } from '../utils/translations';
 
-export function VerdictCard({ card, speakerColors, formatTime, onClick }) {
+export function VerdictCard({ card, speakerColors, formatTime, onClick, language }) {
   const colorIndex = card.dominantSpeakerId !== null && card.dominantSpeakerId !== undefined
     ? parseInt(card.dominantSpeakerId)
     : 0;
@@ -17,7 +18,7 @@ export function VerdictCard({ card, speakerColors, formatTime, onClick }) {
           <span>{card.speaker || 'Unknown'}</span>
         </div>
         <span className="card-verdict-badge">
-          {card.pending ? 'Verifying...' : card.verdict}
+          {card.pending ? t(language, 'verdictVerifying') : card.verdict}
         </span>
       </div>
       <div className="card-claim">"{card.claim}"</div>
@@ -25,7 +26,9 @@ export function VerdictCard({ card, speakerColors, formatTime, onClick }) {
       <div className="card-meta-row">
         <span>{formatTime(card.timestamp)}</span>
         {!card.pending && card.sources?.length > 0 && (
-          <span className="sources-count">📚 {card.sources.length} sources</span>
+          <span className="sources-count">
+            📚 {card.sources.length} {card.sources.length > 1 ? 'sources' : 'source'}
+          </span>
         )}
       </div>
     </div>
