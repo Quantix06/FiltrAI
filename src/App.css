@@ -1025,12 +1025,14 @@
 
 .tuto-step strong {
   color: var(--text-primary);
-  display: block;
+  display: inline;
+  margin-right: 6px;
 }
 
 .tuto-step p {
   color: var(--text-secondary);
-  margin: 4px 0 0 0;
+  margin: 0;
+  display: inline;
 }
 
 .tuto-step .step-num {

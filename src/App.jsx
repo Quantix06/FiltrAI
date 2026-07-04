@@ -274,13 +274,7 @@ function App() {
     }
   };
 
-  // Export current session
-  const handleExportSession = () => {
-    if (transcripts.length === 0 && verdicts.length === 0) {
-      alert('No data to export yet!');
-      return;
-    }
-
+  const generateSessionMarkdown = () => {
     const title = `FiltrAI Session — ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
     let md = `# ${title}\n\n`;
     md += `## Settings\n`;
@@ -294,6 +288,10 @@ function App() {
       md += `*No transcripts recorded.*\n\n`;
     } else {
       transcripts.forEach(t => {
+        if (t.isDivider) {
+          md += `--- Nouvelle session: ${new Date(t.timestamp).toLocaleString()} ---\n\n`;
+          return;
+        }
         const name = speakersMap[t.speakerId] || `Speaker ${t.speakerId}`;
         md += `**[${formatTime(t.timestamp)}] ${name}**: ${t.text}\n\n`;
       });
@@ -318,7 +316,17 @@ function App() {
         md += `\n`;
       });
     }
+    return md;
+  };
 
+  // Export current session
+  const handleExportSession = () => {
+    if (transcripts.length === 0 && verdicts.length === 0) {
+      alert(t(settings.language, 'noDataToCopy'));
+      return;
+    }
+
+    const md = generateSessionMarkdown();
     const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -327,6 +335,22 @@ function App() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  // Copy current session to clipboard
+  const handleCopySession = async () => {
+    if (transcripts.length === 0 && verdicts.length === 0) {
+      alert(t(settings.language, 'noDataToCopy'));
+      return;
+    }
+
+    const md = generateSessionMarkdown();
+    try {
+      await navigator.clipboard.writeText(md);
+      alert(t(settings.language, 'copiedSuccess'));
+    } catch (err) {
+      alert('Failed to copy to clipboard.');
+    }
   };
 
   const handlePurgeNotWorthy = () => {
@@ -344,6 +368,7 @@ function App() {
       <Header
         settings={settings}
         onExportSession={handleExportSession}
+        onCopySession={handleCopySession}
         onOpenSettings={() => setShowSettings(true)}
       />
 

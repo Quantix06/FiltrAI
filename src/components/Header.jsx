@@ -1,7 +1,7 @@
 import React from 'react';
 import { t } from '../utils/translations';
 
-export function Header({ settings, onExportSession, onOpenSettings }) {
+export function Header({ settings, onExportSession, onCopySession, onOpenSettings }) {
   const lang = settings.language;
   return (
     <header className="app-header">
@@ -20,6 +20,9 @@ export function Header({ settings, onExportSession, onOpenSettings }) {
         </span>
       </div>
       <div className="header-actions">
+        <button className="icon-btn" onClick={onCopySession} title={t(lang, 'copySession')}>
+          📋
+        </button>
         <button className="icon-btn" onClick={onExportSession} title={t(lang, 'exportSession')}>
           📥
         </button>
