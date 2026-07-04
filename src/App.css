@@ -966,3 +966,84 @@
   align-items: center;
 }
 
+/* Tuto Side Button */
+.tuto-side-btn {
+  position: fixed;
+  right: calc(50% - 240px); /* Sticks to the right edge of the 480px centered mobile container */
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: none;
+  padding: 12px 6px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  cursor: pointer;
+  z-index: 99;
+  box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tuto-side-btn:hover {
+  background: linear-gradient(135deg, #4f46e5, #6d28d9);
+  padding-left: 10px;
+  box-shadow: -4px 6px 15px rgba(99, 102, 241, 0.3);
+}
+
+.tuto-side-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Adjust right position for screens smaller than the centered container width */
+@media (max-width: 480px) {
+  .tuto-side-btn {
+    right: 0;
+  }
+}
+
+/* Tuto Step Layout Inside Modals */
+.tuto-step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tuto-step:last-child {
+  margin-bottom: 0;
+}
+
+.tuto-step strong {
+  color: var(--text-primary);
+  display: block;
+}
+
+.tuto-step p {
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+}
+
+.tuto-step .step-num {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
